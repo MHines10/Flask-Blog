@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+    <h1>Hello {{ name }} from the index template</h1>
+    <h4>{{ 10 + 5 }}</h4>
+
+    {{ fruits }}
+
+    I love {{ fruits[5] }}!
+    <h4>My favorite fruits are:</h4>
+    <ul>
+        {% for f in fruits %} 
+        {% if f[-1] == 'y' %}
+        <li>{{ f.upper() }}</li>
+        {% else %}
+        <li>{{ f.lower() }}</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+
+{% endblock %}
