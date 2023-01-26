@@ -1,14 +1,19 @@
 from flask import request
 from . import api
+from .auth import basic_auth
 from app.models import Post, User
 
 #####################
 #        Post       #
 #####################
 
-@api.route('/')
+#Token Auth
+@api.route('/token')
+@basic_auth.login_required
 def index():
-    return 'Hello this is the api'
+    user = basic_auth.current_user()
+    token = user.get_token()
+    return {'token': token, 'token_expiration': user.token_expiration}
 
 # Endpoint to get ALL of the posts
 @api.route('/posts', methods=['GET'])
