@@ -55,7 +55,7 @@ def create_post():
 #####################
 
 # Endpoint to create a new user
-@api.route('/users/create', methods=['POST'])
+@api.route('/users', methods=['POST'])
 def create_user():
     # Check to see that the request sent a JSON request body
     if not request.is_json:
@@ -67,14 +67,18 @@ def create_user():
     for field in ['email', 'username', 'password']:
         if field not in data:
             return {f"error: Missing field: ${field} "}, 400
-
+    # pull values from rquest body
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
 
+    existing_user = User.query.filter((User.User.username == username) | (User.email == email)).all()
+    if existing_user:
+        return {f"error: User already exists"}, 400
+
+    #create new user instance
     new_user = User(email=email, username=username, password=password)
     
-
     return new_user.to_dict(), 201
 
 # Endpoint to get an existing user
@@ -84,7 +88,7 @@ def get_user(user_id):
     return user.to_dict(), 200
  
 # Endpoint to get all users
-@api.route('/users', methods=['GET'])
-def get_users():
-    users = User.query.filter_by(username=username)
-    return [user.to_dict() for user in users], 200
+# @api.route('/users', methods=['GET'])
+# def get_users():
+#     users = User.query.filter_by(username=username)
+#     return [user.to_dict() for user in users], 200
