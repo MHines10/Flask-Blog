@@ -1,6 +1,6 @@
 from flask import request
 from . import api
-from .auth import basic_auth
+from .auth import basic_auth, token_auth
 from app.models import Post, User
 
 #####################
@@ -30,6 +30,7 @@ def get_post(post_id):
 
 # Endpoint to create new post
 @api.route('/posts', methods=['POST'])
+@token_auth.login_required
 def create_post():
     # ChecK to see that the request sent a request body that is JSON
     if not request.is_json:
@@ -38,7 +39,7 @@ def create_post():
     data = request.json
 
     # Check to see that the data is valid
-    for field in ['title', 'body', 'user_id']:
+    for field in ['title', 'body']:
         if field not in data:
              # If the field is not in the request body, throw an error saying they are missing that field
             return {"error": "Missing field: " + field}, 400
@@ -46,10 +47,11 @@ def create_post():
     # pull the fields from the request data
     title = data.get('title')
     body = data.get('body')
-    user_id = data.get('user_id')
+
+    user = token_auth.current_user()
 
      # Create a new Post instance with data from request
-    new_post = Post(title=title, body=body, user_id=user_id)
+    new_post = Post(title=title, body=body, user_id=user.id)
 
     # Return the new post as a JSON response
     return new_post.to_dict(), 201
