@@ -22,7 +22,7 @@ def create_user():
     password = data.get('password')
 
     new_user = User(email=email, username=username, password=password)
-    new_user.save()
+   
 
     return new_user.to_dict(), 201
 
